@@ -6,7 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestExamplesBasic(t *testing.T) {
+func TestExamplesVPCAssociation(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: "../examples/vpc_associations",

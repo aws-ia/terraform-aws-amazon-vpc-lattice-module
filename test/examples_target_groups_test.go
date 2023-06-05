@@ -6,7 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestExamplesBasic(t *testing.T) {
+func TestExamplesTargetGroups(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: "../examples/target_groups",

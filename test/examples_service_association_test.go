@@ -6,7 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestExamplesBasic(t *testing.T) {
+func TestExamplesServiceAssociation(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: "../examples/service_association",
