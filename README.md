@@ -7,8 +7,6 @@ This module can be used to deploy resources from [Amazon VPC Lattice](https://do
 
 This module handles all the different resources you can use with VPC Lattice: Service Network, Service, Listeners, Listener Rules, Target Groups (and targets), and Associations (Service or VPC). You have the freedom to create the combination of resources you need, so in multi-AWS Account environments you can make use of the module as many times as needed (different providers) to create your application network architecture.
 
-You can check common [Amazon VPC Lattice Reference Architectures](https://d1.awsstatic.com/architecture-diagrams/ArchitectureDiagrams/lattice-use-cases-ra.pdf) to understand the different use cases you can build with the AWS service.
-
 ### Service Network (var.service\_network)
 
 A Service Network is a logical boundary for a collection of services. It is the central place of connectivity where consumers (located in a VPC) and producers (target groups) are connected to allow service consumption.
@@ -199,8 +197,8 @@ The attribute `default_action` *- map(any) -* supports the following:
 - `type`          = (string) Default action to apply in the listener. Allowed values are `fixed_response` and `forward`.
 - `status_code`   = (Optional|number) Custom HTTP status codd to return. **To define if the default\_action type is `fixed-response`**.
 - `target_groups` = (Optional|map(string)) Map of target groups to use in the listener's default action. **To define if the default\_action type is `forward`**. The map expects the following:
-    - `target_group_identifier` = (string) Target group identifier. This identifier should be the specific map key defined in *var.target\_groups*.
-    - `weight`                  = (Optional|number) Determines how requests are distributed to the target group. Only required if you specify multiple target groups for a forward action.
+  - `target_group_identifier` = (string) Target group identifier. This identifier should be the specific map key defined in *var.target\_groups*.
+  - `weight`                  = (Optional|number) Determines how requests are distributed to the target group. Only required if you specify multiple target groups for a forward action.
 
 The attribute `rules` (you can define more than 1) supports the following:
 
@@ -208,19 +206,19 @@ The attribute `rules` (you can define more than 1) supports the following:
 - `priority` = (number) The priority assigned to the rule. Each rule for a specific listener must have a unique priority. The lower the number the higher the priority.
 - `http_match_method` = (Optional|string) The HTTP method type.
 - `path_match` = (Optional|map(any)) The path match. **This attribute and `header_matches` cannot be set at the same time.**
-    - `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
-    - `exact` = (Optional|string) Specifies an exact type match.
-    - `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
+  - `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
+  - `exact` = (Optional|string) Specifies an exact type match.
+  - `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
 - `headers_match` = (Optional|map(any)) The header matches. Matches incoming requests with rule based on request header value before applying rule action. **This attribute and `path_match` cannot be set at the same time.**
-    - `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
-    - `name` = (Optional|string) The name of the header.
-    - `exact` = (Optional|string) Specifies an exact type match.
-    - `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
+  - `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
+  - `name` = (Optional|string) The name of the header.
+  - `exact` = (Optional|string) Specifies an exact type match.
+  - `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
 - `action_fixedresponse` = (Optional|map(string)) Describes the rule action that returns a custom HTTP response. **This attribute and `action_forward` cannot be set at the same time.**
-    - `status_code` = (Optional|string) The HTTP response code.
+  - `status_code` = (Optional|string) The HTTP response code.
 - `action_forward` = (Optional|map(string)) The forward action. Traffic that matches the rule is forwarded to the specified target groups. **This attribute and `action_fixedresponse` cannot be set at the same time.**
-    - `target_groups` = (Optional|map(any)) The target groups. You can define more than 1 target group. **The key of each target group should map the key you defined in var.target\_groups**.
-        - `weight` = (Optional|number) With forward actions, you can assign a weight that controls the prioritization and selection of each target group.
+  - `target_groups` = (Optional|map(any)) The target groups. You can define more than 1 target group. **The key of each target group should map the key you defined in var.target\_groups**.
+    - `weight` = (Optional|number) With forward actions, you can assign a weight that controls the prioritization and selection of each target group.
 
 Example of a service with an HTTP Listener (and two Listener rules):
 
