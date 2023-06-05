@@ -16,11 +16,6 @@ locals {
   # ---------- VPC Lattice Service variables ---------
   # Service Association - if Service Network is created or passed
   create_service_association = local.create_service_network || local.sn_identifier_provided
-  # For each service definition, boolean to determine if a VPC Service should be created
-  create_service = {
-    for k, v in try(var.services, {}) : k => true
-    if try(v.name, null) != null
-  }
 
   # ---------- VPC Lattice Target Groups ----------
   # We create a map of target group IDs
