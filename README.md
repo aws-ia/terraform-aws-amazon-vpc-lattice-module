@@ -1,3 +1,4 @@
+<!-- BEGIN_TF_DOCS -->
 # Amazon VPC Lattice Module
 
 This module can be used to deploy resources from [Amazon VPC Lattice](https://docs.aws.amazon.com/vpc-lattice/latest/ug/what-is-vpc-service-network.html). VPC Lattice is a fully managed application networking service that you use to connect, secure, and monitor all your services across multiple accounts and virtual private clouds (VPCs).
@@ -6,7 +7,7 @@ This module can be used to deploy resources from [Amazon VPC Lattice](https://do
 
 This module handles all the different resources you can use with VPC Lattice: Service Network, Service, Listeners, Listener Rules, Target Groups (and targets), and Associations (Service or VPC). You have the freedom to create the combination of resources you need, so in multi-AWS Account environments you can make use of the module as many times as needed (different providers) to create your application network architecture.
 
-### Service Network (var.service_network)
+### Service Network (var.service\_network)
 
 A Service Network is a logical boundary for a collection of services. It is the central place of connectivity where consumers (located in a VPC) and producers (target groups) are connected to allow service consumption.
 
@@ -61,7 +62,7 @@ service_network = {
 }
 ```
 
-### VPC associations (var.vpc_associations)
+### VPC associations (var.vpc\_associations)
 
 When you associate a VPC with a service network, it enables all the targets within that VPC to be clients and communicate with other services associated to that same service network. You can make use of Security Groups to control the access of the VPC association, allowing some traffic segmentation before the traffic arrives to the Service Network.
 
@@ -84,7 +85,7 @@ vpc_associations = {
 }
 ```
 
-### Target Groups (var.target_groups)
+### Target Groups (var.target\_groups)
 
 A Target Group is a collection of targets, or compute resources that run your application or service. Targets in VPC Lattice can be EC2 instances, IP addresses, Lambda functions, Application Load Balancers, or Kubernetes Pods.
 
@@ -194,9 +195,9 @@ The attribute `listeners` (you can define more than 1) supports the following:
 The attribute `default_action` *- map(any) -* supports the following:
 
 - `type`          = (string) Default action to apply in the listener. Allowed values are `fixed_response` and `forward`.
-- `status_code`   = (Optional|number) Custom HTTP status codd to return. **To define if the default_action type is `fixed-response`**.
-- `target_groups` = (Optional|map(string)) Map of target groups to use in the listener's default action. **To define if the default_action type is `forward`**. The map expects the following:
-  - `target_group_identifier` = (string) Target group identifier. This identifier should be the specific map key defined in *var.target_groups*.
+- `status_code`   = (Optional|number) Custom HTTP status codd to return. **To define if the default\_action type is `fixed-response`**.
+- `target_groups` = (Optional|map(string)) Map of target groups to use in the listener's default action. **To define if the default\_action type is `forward`**. The map expects the following:
+  - `target_group_identifier` = (string) Target group identifier. This identifier should be the specific map key defined in *var.target\_groups*.
   - `weight`                  = (Optional|number) Determines how requests are distributed to the target group. Only required if you specify multiple target groups for a forward action.
 
 The attribute `rules` (you can define more than 1) supports the following:
@@ -216,7 +217,7 @@ The attribute `rules` (you can define more than 1) supports the following:
 - `action_fixedresponse` = (Optional|map(string)) Describes the rule action that returns a custom HTTP response. **This attribute and `action_forward` cannot be set at the same time.**
   - `status_code` = (Optional|string) The HTTP response code.
 - `action_forward` = (Optional|map(string)) The forward action. Traffic that matches the rule is forwarded to the specified target groups. **This attribute and `action_fixedresponse` cannot be set at the same time.**
-  - `target_groups` = (Optional|map(any)) The target groups. You can define more than 1 target group. **The key of each target group should map the key you defined in var.target_groups**.
+  - `target_groups` = (Optional|map(any)) The target groups. You can define more than 1 target group. **The key of each target group should map the key you defined in var.target\_groups**.
     - `weight` = (Optional|number) With forward actions, you can assign a weight that controls the prioritization and selection of each target group.
 
 Example of a service with an HTTP Listener (and two Listener rules):
@@ -277,7 +278,7 @@ myservice = {
 }
 ```
 
-Example of a service with auth type "AWS_IAM":
+Example of a service with auth type "AWS\_IAM":
 
 ```hcl
 services = {
@@ -303,3 +304,59 @@ services = {
   }
 }
 ```
+
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.66.0 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.66.0 |
+
+## Modules
+
+| Name | Source | Version |
+|------|--------|---------|
+| <a name="module_listeners"></a> [listeners](#module\_listeners) | ./modules/listeners | n/a |
+| <a name="module_tags"></a> [tags](#module\_tags) | aws-ia/label/aws | 0.0.5 |
+| <a name="module_targets"></a> [targets](#module\_targets) | ./modules/targets | n/a |
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_vpclattice_auth_policy.service_auth_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_auth_policy) | resource |
+| [aws_vpclattice_auth_policy.service_network_auth_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_auth_policy) | resource |
+| [aws_vpclattice_service.lattice_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_service) | resource |
+| [aws_vpclattice_service_network.lattice_service_network](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_service_network) | resource |
+| [aws_vpclattice_service_network_service_association.lattice_service_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_service_network_service_association) | resource |
+| [aws_vpclattice_service_network_vpc_association.lattice_vpc_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_service_network_vpc_association) | resource |
+| [aws_vpclattice_target_group.lambda_lattice_target_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_target_group) | resource |
+| [aws_vpclattice_target_group.lattice_target_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_target_group) | resource |
+| [aws_vpclattice_service.lattice_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpclattice_service) | data source |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_service_network"></a> [service\_network](#input\_service\_network) | Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). The attribute `create_service_network` defines if you want to create or not a service network (`false` by default).<br>More information about the format of this variable can be found in the "Usage - Service Network" section of the README. | `any` | `{}` | no |
+| <a name="input_services"></a> [services](#input\_services) | Definition of the VPC Lattice Services to create. You can use this module to either create only Lattice services (not associated with any service network), or associated with a service network (if you create one or provide an identifier). You can define 1 or more Service using this module.<br>More information about the format of this variable can be found in the "Usage - Services" section of the README. | `any` | `{}` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all the resources created in this module. | `map(string)` | `{}` | no |
+| <a name="input_target_groups"></a> [target\_groups](#input\_target\_groups) | Definitions of the Target Groups to create. You can define 1 or more Target Groups using this module.<br>More information about the format of this variable can be found in the "Usage - Target Groups" section of the README. | `any` | `{}` | no |
+| <a name="input_vpc_associations"></a> [vpc\_associations](#input\_vpc\_associations) | VPC Lattice VPC associations. You can define 1 or more VPC associations using this module.<br>More information about the format of this variable can be found in the "Usage - VPC association" section of the README. | <pre>map(object({<br>    vpc_id             = optional(string)<br>    security_group_ids = optional(list(string))<br>  }))</pre> | `{}` | no |
+
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| <a name="output_listeners_by_service"></a> [listeners\_by\_service](#output\_listeners\_by\_service) | VPC Lattice Listener and Rules. Per Lattice Service, each Listener is composed by the following attributes:<br>- `attributes` = Full output of **aws\_vpclattice\_listener**.<br>- `rules`      = Full output of **aws\_vpclattice\_listener\_rule**. |
+| <a name="output_service_network"></a> [service\_network](#output\_service\_network) | VPC Lattice resource attributes. Full output of **aws\_vpclattice\_service\_network**. |
+| <a name="output_services"></a> [services](#output\_services) | VPC Lattice Services. The output is composed by the following attributes (per Service created):<br>- `attributes`                  = Full output of **aws\_vpclattice\_service**.<br>- `service_network_association` = Full output of **aws\_vpclattice\_service\_network\_service\_association**. |
+| <a name="output_target_groups"></a> [target\_groups](#output\_target\_groups) | VPC Lattice Target Groups. Full output of **aws\_vpclattice\_target\_group**. |
+| <a name="output_vpc_associations"></a> [vpc\_associations](#output\_vpc\_associations) | VPC Lattice VPC associations. Full output of **aws\_vpclattice\_service\_network\_vpc\_association**. |
+<!-- END_TF_DOCS -->
