@@ -16,7 +16,7 @@ echo "Running Checkov Analysis"
 terraform init
 terraform plan -out tf.plan
 terraform show -json tf.plan  > tf.json 
-checkov --download-external-modules true
+checkov --config-file ${PROJECT_PATH}/.config/.checkov.yml
 
 #********** Terratest execution **********
 echo "Running Terratest"

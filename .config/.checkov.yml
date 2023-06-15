@@ -1,5 +1,5 @@
-download-external-modules: False
-evaluate-variables: true
+download-external-modules: True
+evaluate-variables: True
 file:
 - 'tf.json'
 framework:
