@@ -6,14 +6,10 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestExamplesBasic(t *testing.T) {
+func TestExamplesServiceAssociation(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
-		TerraformDir: "../examples/basic",
-		// Vars: map[string]interface{}{
-		// 	"myvar":     "test",
-		// 	"mylistvar": []string{"list_item_1"},
-		// },
+		TerraformDir: "../examples/service_association",
 	}
 
 	defer terraform.Destroy(t, terraformOptions)

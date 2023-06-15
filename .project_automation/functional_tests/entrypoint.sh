@@ -9,12 +9,14 @@ echo "Starting Functional Tests"
 
 cd ${PROJECT_PATH}
 
+export AWS_DEFAULT_REGION=eu-west-1
+
 #********** Checkov Analysis *************
 echo "Running Checkov Analysis"
 terraform init
 terraform plan -out tf.plan
 terraform show -json tf.plan  > tf.json 
-checkov --config-file ${PROJECT_PATH}/.config/checkov.yml
+checkov --config-file ${PROJECT_PATH}/.config/checkov.yml --download-external-modules true
 
 #********** Terratest execution **********
 echo "Running Terratest"
