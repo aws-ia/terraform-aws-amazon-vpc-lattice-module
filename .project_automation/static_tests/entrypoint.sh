@@ -4,7 +4,6 @@
 # managed and local tasks always use these variables for the project and project type path
 PROJECT_PATH=${BASE_PATH}/project
 PROJECT_TYPE_PATH=${BASE_PATH}/projecttype
-git config --global --add safe.directory ${PROJECT_PATH}
 
 echo "Starting Static Tests"
 
@@ -14,35 +13,43 @@ terraform validate
 
 #********** tflint ********************
 echo 'Starting tflint'
-tflint --init
-MYLINT=$(tflint --force)
+tflint --init --config ${PROJECT_PATH}/.config/.tflint.hcl
+MYLINT=$(tflint --force --config ${PROJECT_PATH}/.config/.tflint.hcl)
 if [ -z "$MYLINT" ]
 then
     echo "Success - tflint found no linting issues!"
 else
-    echo "Failure - tflint found linting issues!" 
+    echo "Failure - tflint found linting issues!"
     echo "$MYLINT"
     exit 1
 fi
 #********** tfsec *********************
-# tfsec will report to the console with success or Failure
-# therefore there is no need to provide such conditional stetements
 echo 'Starting tfsec'
-tfsec .
+MYTFSEC=$(tfsec . --config-file ${PROJECT_PATH}/.config/tfsec.yml || true)
+if [[ $MYTFSEC == *"No problems detected!"* ]];
+then
+    echo "Success - tfsec found no security issues!"
+    echo "$MYTFSEC"
+else
+    echo "Failure - tfsec found security issues!"
+    echo "$MYTFSEC"
+    exit 1
+fi
+
 #********** Markdown Lint **************
 echo 'Starting markdown lint'
-MYMDL=$(mdl .header.md || true)
+MYMDL=$(mdl --config ${PROJECT_PATH}/.config/.mdlrc .header.md || true)
 if [ -z "$MYMDL" ]
 then
     echo "Success - markdown lint found no linting issues!"
 else
-    echo "Failure - markdown lint found linting issues!" 
+    echo "Failure - markdown lint found linting issues!"
     echo "$MYMDL"
     exit 1
 fi
 #********** Terraform Docs *************
 echo 'Starting terraform-docs'
-TDOCS="$(terraform-docs --lockfile=false ./)"
+TDOCS="$(terraform-docs --config ${PROJECT_PATH}/.config/.terraform-docs.yaml --lockfile=false ./)"
 git add -N README.md
 GDIFF="$(git diff --compact-summary)"
 if [ -z "$GDIFF" ]
