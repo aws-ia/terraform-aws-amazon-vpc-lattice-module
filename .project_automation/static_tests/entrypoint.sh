@@ -25,7 +25,7 @@ else
 fi
 #********** tfsec *********************
 echo 'Starting tfsec'
-MYTFSEC=$(tfsec . --config-file ${PROJECT_PATH}/.config/tfsec.yml || true)
+MYTFSEC=$(tfsec . --config-file ${PROJECT_PATH}/.config/.tfsec.yml || true)
 if [[ $MYTFSEC == *"No problems detected!"* ]];
 then
     echo "Success - tfsec found no security issues!"
