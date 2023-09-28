@@ -107,19 +107,26 @@ resource "aws_vpclattice_target_group" "lattice_target_group" {
     ip_address_type  = try(each.value.config.ip_address_type, null)
     protocol_version = try(each.value.config.protocol_version, null)
 
-    health_check {
-      enabled                       = try(each.value.health_check.enabled, true)
-      health_check_interval_seconds = try(each.value.health_check.health_check_interval_seconds, null)
-      health_check_timeout_seconds  = try(each.value.health_check.health_check_timeout_seconds, null)
-      healthy_threshold_count       = try(each.value.health_check.healthy_threshold_count, null)
-      path                          = try(each.value.health_check.path, null)
-      port                          = try(each.value.health_check.port, null)
-      protocol                      = try(each.value.health_check.protocol, null)
-      protocol_version              = try(each.value.health_check.protocol_version, null)
-      unhealthy_threshold_count     = try(each.value.health_check.unhealthy_threshold_count, null)
+    dynamic health_check {
+      for_each = {
+        for k, v in var.target_groups : k => v
+        if v.type != "ALB"
+      }
 
-      matcher {
-        value = try(each.value.health_check.matcher, null)
+      content {
+        enabled                       = try(each.value.health_check.enabled, true)
+        health_check_interval_seconds = try(each.value.health_check.health_check_interval_seconds, null)
+        health_check_timeout_seconds  = try(each.value.health_check.health_check_timeout_seconds, null)
+        healthy_threshold_count       = try(each.value.health_check.healthy_threshold_count, null)
+        path                          = try(each.value.health_check.path, null)
+        port                          = try(each.value.health_check.port, null)
+        protocol                      = try(each.value.health_check.protocol, null)
+        protocol_version              = try(each.value.health_check.protocol_version, null)
+        unhealthy_threshold_count     = try(each.value.health_check.unhealthy_threshold_count, null)
+
+        matcher {
+          value = try(each.value.health_check.matcher, null)
+        }
       }
     }
   }
