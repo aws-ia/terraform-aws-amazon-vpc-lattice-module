@@ -20,7 +20,7 @@ module "vpclattice_vpc_associations" {
 module "vpcs" {
   for_each = var.vpcs
   source   = "aws-ia/vpc/aws"
-  version  = "4.2.1"
+  version  = "4.4.1"
 
   name       = each.key
   cidr_block = each.value.cidr_block
