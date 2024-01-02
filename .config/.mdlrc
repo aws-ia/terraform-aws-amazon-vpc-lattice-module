@@ -2,4 +2,6 @@
 # MD007 Unordered list indentation
 # MD013 Line length
 # MD029 Ordered list item prefix
-rules "~MD007", "~MD013", "~MD029"
+# MD055 Table row doesn't begin/end with pipes
+# MD057 Table has missing or invalid header separation (second row)
+rules "~MD007", "~MD013", "~MD029", "~MD055", "~MD057"
