@@ -21,7 +21,7 @@ This example shows how you can use the VPC Lattice module to only create Target 
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | aws-ia/vpc/aws | 4.2.1 |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | aws-ia/vpc/aws | 4.4.1 |
 | <a name="module_vpclattice_target_groups"></a> [vpclattice\_target\_groups](#module\_vpclattice\_target\_groups) | ../.. | n/a |
 
 ## Resources

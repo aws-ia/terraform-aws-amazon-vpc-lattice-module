@@ -94,7 +94,7 @@ You can create more than 1 Target Groups with this module, as this variable expe
 - `name`         = (Optional|string) The name of the target group. If not provided, the key of the map will be used as name.
 - `type`         = (string) The type of target group. Valid Values are `IP`, `LAMBDA`, `INSTANCE`, `ALB`.
 - `config`       = (Optional|map(any)) Target group configuration - more information about its definition below. If type is set to `LAMBDA`, this parameter should not be specified.
-- `health_check` = (Optional|map(any)) Health check configuration - more information about its definition below.
+- `health_check` = (Optional|map(any)) Health check configuration - more information about its definition below. If type is set to `LAMBDA` or `ALB`, this parameter should not be specified.
 - `targets`      = (Optional|map(any)) Targets to associate to the target group. If `type` is equals to `LAMBDA` or `ALB`, only one target can be defined. More information about its definition below.
 
 **The key used for each of the target group definitions is the one expected when defining the Service Listeners and Rules (var.services)**, so make sure these values are unique.
@@ -104,8 +104,8 @@ The `config` attribute *- map(any) -* supports the following:
 - `port`             = (number) Port on which the targets are listening.
 - `protocol`         = (string) Protocol to use for routing traffic to the targets. Valid values: `HTTP` and `HTTPS`.
 - `vpc_identifier`   = (string) VPC ID.
-- `ip_address_type`  = (Optional|string) IP address type for the target group. Valid values: `IPV4` and `IPV6`.
-- `protocol_version` = (Optional|string) Protocol version. Valid values: `HTTP1` (default), `HTTP2`, `GRCP`.
+- `ip_address_type`  = (Optional|string) IP address type for the target group. Valid values: `IPV4` and `IPV6`. If type is set to `ALB`, this parameter should not be specified.
+- `protocol_version` = (Optional|string) Protocol version. Valid values: `HTTP1` (default), `HTTP2`, `GRPC`.
 
 The `health_check` attribute *- map(any) -* supports the following:
 

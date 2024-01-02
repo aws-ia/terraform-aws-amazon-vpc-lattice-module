@@ -21,7 +21,7 @@ This example shows how you can use the VPC Lattice module to create VPC associat
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_vpclattice_vpc_associations"></a> [vpclattice\_vpc\_associations](#module\_vpclattice\_vpc\_associations) | ../.. | n/a |
-| <a name="module_vpcs"></a> [vpcs](#module\_vpcs) | aws-ia/vpc/aws | 4.2.1 |
+| <a name="module_vpcs"></a> [vpcs](#module\_vpcs) | aws-ia/vpc/aws | 4.4.1 |
 
 ## Resources
 
