@@ -76,9 +76,9 @@ module "myservice" {
         port           = 80
         protocol       = "HTTP"
         vpc_identifier = module.vpc.vpc_attributes.id
-        health_check = {
-          enabled = false
-        }
+      }
+      health_check = {
+        enabled = false
       }
     }
     lambdatargethttp  = { type = "LAMBDA" }
