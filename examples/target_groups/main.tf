@@ -38,13 +38,23 @@ module "vpclattice_target_groups" {
         }
       }
     }
+
+    albtarget = {
+      type = "ALB"
+      config = {
+        port             = 443
+        protocol         = "HTTPS"
+        vpc_identifier   = module.vpc.vpc_attributes.id
+        protocol_version = "HTTP2"
+      }
+    }
   }
 }
 
 # VPC - to create IP targets
 module "vpc" {
   source  = "aws-ia/vpc/aws"
-  version = "4.2.1"
+  version = "4.4.1"
 
   name       = "vpc"
   cidr_block = "10.0.0.0/24"

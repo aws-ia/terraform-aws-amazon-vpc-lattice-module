@@ -26,7 +26,7 @@ No providers.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_myservice"></a> [myservice](#module\_myservice) | ../.. | n/a |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | aws-ia/vpc/aws | 4.2.1 |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | aws-ia/vpc/aws | 4.4.1 |
 
 ## Resources
 
