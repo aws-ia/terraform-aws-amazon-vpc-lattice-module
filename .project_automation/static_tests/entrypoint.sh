@@ -36,6 +36,19 @@ else
     exit 1
 fi
 
+#********** Checkov Analysis *************
+echo "Running Checkov Analysis"
+MYCHECKOV=$(checkov --config-file ${PROJECT_PATH}/.config/.checkov.yml || true)
+if [- z "$MYCHECKOV" ]
+then 
+    echo "Success - checkov found no security issues!"
+    echo "$MYCHECKOV"
+else
+    echo "Failure - checkov found security issues!"
+    echo "$MYCHECKOV"
+    exit 1
+fi
+
 #********** Markdown Lint **************
 echo 'Starting markdown lint'
 MYMDL=$(mdl --config ${PROJECT_PATH}/.config/.mdlrc .header.md examples/*/.header.md || true)
