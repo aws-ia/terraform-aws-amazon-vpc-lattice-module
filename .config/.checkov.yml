@@ -1,15 +1,21 @@
+<<<<<<< before updating
 download-external-modules: True
 evaluate-variables: True
 file:
 - 'tf.json'
+=======
+download-external-modules: False
+evaluate-variables: true
+directory:
+- ./
+>>>>>>> after updating
 framework:
-- terraform_plan
+- terraform
 skip-check:
 - CKV2_GCP*
 - CKV_AZURE*
 - CKV2_AZURE*
-repo-root-for-plan-enrichment:
-- '.'
+- CKV_TF_1 # default to Terraform registry instead of Git
 summary-position: bottom
 output: 'cli'
 compact: True
