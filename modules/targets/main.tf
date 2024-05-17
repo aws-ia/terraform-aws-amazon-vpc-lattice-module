@@ -11,3 +11,17 @@ resource "aws_vpclattice_target_group_attachment" "target_attachment" {
     port = try(each.value.port, null)
   }
 }
+
+# AWS Lambda permission (only if LAMDBA type)
+resource "aws_lambda_permission" "lambda_target_vpclattice" {
+  for_each = {
+    for k, v in var.targets : k => v
+    if var.target_type == "LAMBDA"
+  }
+
+  statement_id  = "AllowExecutionFromVpcLattice"
+  action        = "lambda:InvokeFunction"
+  function_name = split(":", each.value.id)[6]
+  principal     = "vpc-lattice.amazonaws.com"
+  source_arn    = var.target_group_identifier
+}
