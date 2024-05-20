@@ -101,11 +101,12 @@ You can create more than 1 Target Groups with this module, as this variable expe
 
 The `config` attribute *- map(any) -* supports the following:
 
-- `port`             = (number) Port on which the targets are listening.
-- `protocol`         = (string) Protocol to use for routing traffic to the targets. Valid values: `HTTP` and `HTTPS`.
-- `vpc_identifier`   = (string) VPC ID.
-- `ip_address_type`  = (Optional|string) IP address type for the target group. Valid values: `IPV4` and `IPV6`. If type is set to `ALB`, this parameter should not be specified.
-- `protocol_version` = (Optional|string) Protocol version. Valid values: `HTTP1` (default), `HTTP2`, `GRPC`.
+- `port`                           = (number) Port on which the targets are listening. Not supported if type is set to `LAMBDA`.
+- `protocol`                       = (string) Protocol to use for routing traffic to the targets. Valid values: `HTTP` and `HTTPS`. Not supported if type is set to `LAMBDA`.
+- `vpc_identifier`                 = (string) VPC ID. Not supported if type is set to `LAMBDA`.
+- `ip_address_type`                = (Optional|string) IP address type for the target group. Valid values: `IPV4` and `IPV6`. Not supported if type is set to `LAMBDA` or `ALB`.
+- `protocol_version`               = (Optional|string) Protocol version. Valid values: `HTTP1` (default), `HTTP2`, `GRPC`. Not supported if type is set to `LAMBDA`.
+- `lambda_event_structure_version` = (Optional|string) The version of the event structure that the Lambda function receives. Valid values: `V1`and `V2` (default). Supported only if type is set to `LAMBDA`.
 
 The `health_check` attribute *- map(any) -* supports the following:
 
@@ -125,33 +126,15 @@ The `targets` attribute *- map(any) -* supports the following:
 - `id`   = (Required|string) The ID of the target. If the target type of the target group is INSTANCE, this is an instance ID. If the target type is IP , this is an IP address. If the target type is LAMBDA, this is the ARN of the Lambda function. If the target type is ALB, this is the ARN of the Application Load Balancer.
 - `port` = (Optional|number) The port on which the target is listening. For HTTP, the default is 80. For HTTPS, the default is 443. Attribute not needed with target type of `LAMBDA`.
 
-Example of a `LAMBDA` type target group:
+Example of an `LAMBDA` and `IP` type target groups:
 
 ```hcl
 target_groups = {
     lambdatarget = {
-        name = "lambdatarget"
         type = "LAMBDA"
-    }
-}
-```
-
-Example of an `INSTANCE` and `IP` type target groups (without health checks): **(TO ADD TARGETS WHEN AVAILABLE)**
-
-```hcl
-target_groups = {
-    instancetarget = {
-        type = "INSTANCE"
-        config = {
-            port            = 80
-            protocol        = "HTTP"
-            vpc_identifier  = "vpc-XXX"
-            ip_address_type = "IPV4"
+        targets = {
+          mylambda = { id = aws_lambda_function.lambda.arn }
         }
-        health_check = {
-            enabled = false
-        }
-        targets = {}
     }
 
     iptarget = {
@@ -165,7 +148,20 @@ target_groups = {
         health_check = {
             enabled = false
         }
-        targets = {}
+        targets = {
+          ip1 = {
+            id   = "10.0.0.10"
+            port = 80
+          }
+          ip2 = {
+            id   = "10.0.0.20"
+            port = 80
+          }
+          ip3 = {
+            id   = "10.0.0.30"
+            port = 80
+          }
+        }
     }
 }
 ```

@@ -87,6 +87,10 @@ resource "aws_vpclattice_target_group" "lambda_lattice_target_group" {
   name = try(each.value.name, each.key)
   type = each.value.type
 
+  config {
+    lambda_event_structure_version = try(each.value.config.lambda_event_structure_version, "V2")
+  }
+
   tags = module.tags.tags_aws
 }
 
@@ -134,13 +138,14 @@ resource "aws_vpclattice_target_group" "lattice_target_group" {
 # VPC Lattice Targets
 module "targets" {
   for_each = {
-    for k, v in var.target_groups : k => v.targets
+    for k, v in var.target_groups : k => v
     if contains(keys(v), "targets")
   }
   source = "./modules/targets"
 
-  target_group_identifier = try(aws_vpclattice_target_group.lambda_lattice_target_group[each.key].id, aws_vpclattice_target_group.lattice_target_group[each.key].id)
-  targets                 = each.value
+  target_type             = each.value.type
+  target_group_identifier = try(aws_vpclattice_target_group.lambda_lattice_target_group[each.key].arn, aws_vpclattice_target_group.lattice_target_group[each.key].arn)
+  targets                 = each.value.targets
 }
 
 # ---------- LISTENERS AND RULES ----------
