@@ -3,7 +3,7 @@
 variable "service_network" {
   type        = any
   description = <<-EOF
-    Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). The attribute `create_service_network` defines if you want to create or not a service network (`false` by default).
+    Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). Setting the `name` attribute will create a **new** service network, while using the attribute `identifier` will reference an **existing** service network.
     More information about the format of this variable can be found in the "Usage - Service Network" section of the README.
 EOF
 
