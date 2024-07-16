@@ -15,12 +15,12 @@ You can configure centrally security by using IAM policies for access control, a
 
 When creating a Service Network in the module, the following attributes are expected:
 
-- `name`        = (Optional|string) Name of the Service Network. If `create_service_network` is `true`, this value is required. **This attribute and `identifier` cannot be set at the same time.**
+- `name`        = (Optional|string) Name of the Service Network. This attribute creates a **new** service network using the specified name. **This attribute and `identifier` cannot be set at the same time.**
 - `auth_type`   = (Optional|string) Type of IAM policy to apply in the service network. Allowed values are `NONE` (default) `AWS_IAM`.
 - `auth_policy` = (Optional|any) Auth policy. The policy string in JSON must not contain newlines or blank lines. The auth policy resource will be created only if `auth_type` is set to `AWS_IAM`.
-- `identifier`  = (Optional|string) The ID or ARN of an existing service network. If you are working in multi-AWS account environments, ARN is compulsory. **This attribute and `name` cannot be set at the same time.**
+- `identifier`  = (Optional|string) The ID or ARN of an **existing** service network. If you are working in multi-AWS account environments, ARN is compulsory. **This attribute and `name` cannot be set at the same time.**
 
-Example of creating a service network with `auth_type` equals to `NONE`:
+Example of creating a **new** service network with `auth_type` equals to `NONE`:
 
 ```hcl
 service_network = {
@@ -29,7 +29,7 @@ service_network = {
 }
 ```
 
-Example of creating a service network with `auth_type` equals to `AWS_IAM`:
+Example of creating a **new** service network with `auth_type` equals to `AWS_IAM`:
 
 ```hcl
 service_network = {
@@ -54,7 +54,7 @@ service_network = {
 }
 ```
 
-Example of referencing an existing service network into the module:
+Example of referencing an **existing** service network into the module:
 
 ```hcl
 service_network = {
@@ -340,7 +340,7 @@ services = {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_service_network"></a> [service\_network](#input\_service\_network) | Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). The attribute `create_service_network` defines if you want to create or not a service network (`false` by default).<br>More information about the format of this variable can be found in the "Usage - Service Network" section of the README. | `any` | `{}` | no |
+| <a name="input_service_network"></a> [service\_network](#input\_service\_network) | Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). Setting the `name` attribute will create a **new** service network, while using the attribute `identifier` will reference an **existing** service network.<br>More information about the format of this variable can be found in the "Usage - Service Network" section of the README. | `any` | `{}` | no |
 | <a name="input_services"></a> [services](#input\_services) | Definition of the VPC Lattice Services to create. You can use this module to either create only Lattice services (not associated with any service network), or associated with a service network (if you create one or provide an identifier). You can define 1 or more Service using this module.<br>More information about the format of this variable can be found in the "Usage - Services" section of the README. | `any` | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all the resources created in this module. | `map(string)` | `{}` | no |
 | <a name="input_target_groups"></a> [target\_groups](#input\_target\_groups) | Definitions of the Target Groups to create. You can define 1 or more Target Groups using this module.<br>More information about the format of this variable can be found in the "Usage - Target Groups" section of the README. | `any` | `{}` | no |
