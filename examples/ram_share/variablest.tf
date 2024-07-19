@@ -5,8 +5,3 @@ variable "aws_region" {
   description = "AWS Region to use."
   default     = "eu-west-1"
 }
-
-variable "aws_account_id" {
-  type        = string
-  description = "AWS Account ID - to share AWS RAM share."
-}

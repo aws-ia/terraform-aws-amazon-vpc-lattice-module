@@ -97,7 +97,7 @@ EOF
 
   validation {
     error_message = "Invalid key in any of the definitions for var.ram_share. Valid options include: \"resource_share_arn\", \"resource_share_name\", \"allow_external_principals\", \"principals\", \"share_service_network\", \"share_services\"."
-    condition = length(setsubtract(keys(try(var.ram_share, {})), [
+    condition = length(setsubtract(keys(var.ram_share), [
       "resource_share_arn",
       "resource_share_name",
       "allow_external_principals",
