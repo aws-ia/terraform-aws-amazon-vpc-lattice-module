@@ -159,3 +159,41 @@ module "listeners" {
   target_groups        = local.target_group_ids
   tags                 = module.tags.tags_aws
 }
+
+# ---------- AWS RESOURCE ACCESS MANAGER ----------
+# Create AWS RAM Resource Share (if name provided)
+resource "aws_ram_resource_share" "ram_resource_share" {
+  count = local.create_ram_resource_share ? 1 : 0
+
+  name                      = var.ram_share.resource_share_name
+  allow_external_principals = try(var.ram_share.allow_external_principals, false)
+
+  tags = module.tags.tags_aws
+}
+
+# AWS RAM principal association
+resource "aws_ram_principal_association" "ram_principal_association" {
+  for_each = {
+    for k, v in local.principals_map : k => v
+    if local.config_ram_share
+  }
+
+  principal          = each.value
+  resource_share_arn = local.resource_share_arn
+}
+
+# AWS RAM resource association - VPC Lattice service network
+resource "aws_ram_resource_association" "ram_service_network_association" {
+  count = local.share_service_network ? 1 : 0
+
+  resource_arn       = aws_vpclattice_service_network.lattice_service_network[0].arn
+  resource_share_arn = local.resource_share_arn
+}
+
+# AWS RAM resource association - VPC Lattice services
+resource "aws_ram_resource_association" "ram_services_association" {
+  count = local.config_ram_share ? length(local.share_services) : 0
+
+  resource_arn       = aws_vpclattice_service.lattice_service[local.share_services[count.index]].arn
+  resource_share_arn = local.resource_share_arn
+}
