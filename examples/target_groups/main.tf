@@ -78,7 +78,7 @@ resource "aws_lambda_function" "lambda" {
 
 data "archive_file" "python_lambda_package" {
   type        = "zip"
-  source_file = "./function.py"
+  source_file = "${path.module}/function.py"
   output_path = "lambda_function.zip"
 }
 

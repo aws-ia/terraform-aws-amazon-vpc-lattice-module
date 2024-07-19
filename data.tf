@@ -33,7 +33,7 @@ locals {
   # Getting RAM resource share ARN
   resource_share_arn = local.create_ram_resource_share ? aws_ram_resource_share.ram_resource_share[0].arn : try(var.ram_share.resource_share_arn, null)
   # Determining if the service network needs to be shared
-  share_service_network = local.create_service_network && try(var.ram_share.share_service_network, true)
+  share_service_network = local.config_ram_share ? local.create_service_network && try(var.ram_share.share_service_network, true) : false
   # Default of var.ram_share.share_services - if not defined, all the created services will be included
   share_services = try(var.ram_share.share_services, keys(var.services))
   # Move var.ram_share.principals from list(string) to map(string)
