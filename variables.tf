@@ -10,7 +10,7 @@ EOF
   default = {}
 
   validation {
-    error_message = "Invalid key in any of the definitions for var.service_network. Valid options include: \"name\", \"auth_type\", \"auth_policy\", \"identifier\"."
+    error_message = "Invalid key in any of the definitions for var.service_network. Valid options include: \"name\", \"auth_type\", \"auth_policy\", \"identifier\", \"identifier\"."
     condition = length(setsubtract(keys(try(var.service_network, {})), [
       "name",
       "auth_type",
@@ -83,6 +83,28 @@ EOF
         "targets"
       ])) == 0
     ])
+  }
+}
+
+variable "ram_share" {
+  type        = any
+  description = <<-EOF
+  Configuration of the resources to share using AWS Resource Access Manager (RAM). VPC Lattice service networks and services can be shared using RAM.
+  More information about the format of this variable can be found in the "Usage - AWS RAM share" section of the README.
+EOF
+
+  default = {}
+
+  validation {
+    error_message = "Invalid key in any of the definitions for var.ram_share. Valid options include: \"resource_share_arn\", \"resource_share_name\", \"allow_external_principals\", \"principals\", \"share_service_network\", \"share_services\"."
+    condition = length(setsubtract(keys(try(var.ram_share, {})), [
+      "resource_share_arn",
+      "resource_share_name",
+      "allow_external_principals",
+      "principals",
+      "share_service_network",
+      "share_services"
+    ])) == 0
   }
 }
 

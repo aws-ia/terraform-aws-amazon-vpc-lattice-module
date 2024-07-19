@@ -41,3 +41,10 @@ output "listeners_by_service" {
   - `rules`      = Full output of **aws_vpclattice_listener_rule**.
 EOF
 }
+
+output "ram_resource_share" {
+  value       = try(aws_ram_resource_share.ram_resource_share[0], null)
+  description = <<-EOF
+  AWS Resource Access Manager resource share. Full output of **aws_ram_resource_share**.
+EOF
+}
