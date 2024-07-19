@@ -307,7 +307,7 @@ You can share VPC Lattice services using AWS RAM with this module. Check the sec
 
 ## Sharing VPC Lattice resources
 
-With [AWS Resource Access Manager]() (RAM), you can share VPC Lattice service networks and services. With this module, you can use the variable `var.ram_share` to share VPC Lattice resources. The variable supports the following attributes:
+With [AWS Resource Access Manager](https://aws.amazon.com/ram/) (RAM), you can share VPC Lattice service networks and services. With this module, you can use the variable `var.ram_share` to share VPC Lattice resources. The variable supports the following attributes:
 
 - `resources_share_arn`       = (Optional|string) ARN of an **existing** RAM Resource Share to use to associate principals and VPC Lattice resources. **This attribute and `resource_share_name` cannot be set at the same time.**
 - `resources_share_name`      = (Optional|string) Name of the RAM Resource Share resource. This attribute creates a **new** resource using the specified name. **This attribute and `resources_share_arn` cannot be set at the same time.**
