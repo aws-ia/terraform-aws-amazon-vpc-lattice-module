@@ -1,0 +1,1 @@
+# --- examples/dns_configuration/outputs.tf ---

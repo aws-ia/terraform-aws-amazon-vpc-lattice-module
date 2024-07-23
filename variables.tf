@@ -48,7 +48,7 @@ EOF
   default = {}
 
   validation {
-    error_message = "Invalid key in any of the definitions for var.services. Valid options include: \"identifier\", \"name\", \"auth_type\", \"auth_policy\", \"certificate_arn\", \"custom_domain_name\", \"listeners\"."
+    error_message = "Invalid key in any of the definitions for var.services. Valid options include: \"identifier\", \"name\", \"auth_type\", \"auth_policy\", \"certificate_arn\", \"custom_domain_name\", \"listeners\", and \"private_hosted_zone_id\"."
     condition = alltrue([
       for service in try(var.services, {}) : length(setsubtract(keys(try(service, {})), [
         "identifier",
@@ -57,7 +57,8 @@ EOF
         "auth_policy",
         "certificate_arn",
         "custom_domain_name",
-        "listeners"
+        "listeners",
+        "private_hosted_zone_id"
       ])) == 0
     ])
   }
@@ -90,7 +91,7 @@ variable "ram_share" {
   type        = any
   description = <<-EOF
   Configuration of the resources to share using AWS Resource Access Manager (RAM). VPC Lattice service networks and services can be shared using RAM.
-  More information about the format of this variable can be found in the "Usage - AWS RAM share" section of the README.
+  More information about the format of this variable can be found in the "Sharing VPC Lattice resources" section of the README.
 EOF
 
   default = {}
@@ -104,6 +105,23 @@ EOF
       "principals",
       "share_service_network",
       "share_services"
+    ])) == 0
+  }
+}
+
+variable "dns_configuration" {
+  type = map(string)
+  description = <<-EOF
+  Amazon Route 53 Private Hosted Zone (PHZ) ID to create Alias records of those VPC Lattice services configured with a custom domain name.
+  You can override the PHZ to configure the Alias record by indicating a PHZ ID within the definition of each VPC Lattice service (under var.services). 
+  More information about the format of this variable can be found in the "Amazon Route 53 DNS configuration" section of the README.
+EOF
+  default = {}
+
+  validation {
+    error_message = "Invalid key in any of the definitions for var.dns_configuration. Valid options include: \"private_hosted_zone_id\"."
+    condition = length(setsubtract(keys(var.dns_configuration), [
+      "private_hosted_zone_id"
     ])) == 0
   }
 }
