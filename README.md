@@ -62,6 +62,8 @@ service_network = {
 }
 ```
 
+You can share VPC Lattice service networks using AWS RAM with this module. Check the section [Sharing VPC Lattice resources](#sharing-vpc-lattice-resources) for more information.
+
 ### VPC associations (var.vpc\_associations)
 
 When you associate a VPC with a service network, it enables all the targets within that VPC to be clients and communicate with other services associated to that same service network. You can make use of Security Groups to control the access of the VPC association, allowing some traffic segmentation before the traffic arrives to the Service Network.
@@ -301,6 +303,19 @@ services = {
 }
 ```
 
+You can share VPC Lattice services using AWS RAM with this module. Check the section [Sharing VPC Lattice resources](#sharing-vpc-lattice-resources) for more information.
+
+## Sharing VPC Lattice resources
+
+With [AWS Resource Access Manager](https://aws.amazon.com/ram/) (RAM), you can share VPC Lattice service networks and services. With this module, you can use the variable `var.ram_share` to share VPC Lattice resources. The variable supports the following attributes:
+
+- `resources_share_arn`       = (Optional|string) ARN of an **existing** RAM Resource Share to use to associate principals and VPC Lattice resources. **This attribute and `resource_share_name` cannot be set at the same time.**
+- `resources_share_name`      = (Optional|string) Name of the RAM Resource Share resource. This attribute creates a **new** resource using the specified name. **This attribute and `resources_share_arn` cannot be set at the same time.**
+- `allow_external_principals` = (Optional|boolean) Indicates whether principals outside your organization can be associated with a resource share. **This attribute is allowed only when `resources_share_name` is provided.**
+- `principals` = (Optional|list(string)) List of AWS principals to associated the resources with. Possible values are an AWS account ID, an AWS Organizations Organization ARN, or an AWS Organizations Organization Unit ARN.
+- `share_service_network`     = (Optional|boolean) Indicates whether a created VPC Lattice service network should be associated or not. Defaults to `true`.
+- `share_services`            = (Optional|list(string)) List of created VPC Lattice services to share. You should use the services' keys defined in `var.services`.
+
 ## Requirements
 
 | Name | Version |
@@ -326,6 +341,10 @@ services = {
 
 | Name | Type |
 |------|------|
+| [aws_ram_principal_association.ram_principal_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_principal_association) | resource |
+| [aws_ram_resource_association.ram_service_network_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_resource_association) | resource |
+| [aws_ram_resource_association.ram_services_association](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_resource_association) | resource |
+| [aws_ram_resource_share.ram_resource_share](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_resource_share) | resource |
 | [aws_vpclattice_auth_policy.service_auth_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_auth_policy) | resource |
 | [aws_vpclattice_auth_policy.service_network_auth_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_auth_policy) | resource |
 | [aws_vpclattice_service.lattice_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_service) | resource |
@@ -340,6 +359,7 @@ services = {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_ram_share"></a> [ram\_share](#input\_ram\_share) | Configuration of the resources to share using AWS Resource Access Manager (RAM). VPC Lattice service networks and services can be shared using RAM.<br>More information about the format of this variable can be found in the "Usage - AWS RAM share" section of the README. | `any` | `{}` | no |
 | <a name="input_service_network"></a> [service\_network](#input\_service\_network) | Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). Setting the `name` attribute will create a **new** service network, while using the attribute `identifier` will reference an **existing** service network.<br>More information about the format of this variable can be found in the "Usage - Service Network" section of the README. | `any` | `{}` | no |
 | <a name="input_services"></a> [services](#input\_services) | Definition of the VPC Lattice Services to create. You can use this module to either create only Lattice services (not associated with any service network), or associated with a service network (if you create one or provide an identifier). You can define 1 or more Service using this module.<br>More information about the format of this variable can be found in the "Usage - Services" section of the README. | `any` | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all the resources created in this module. | `map(string)` | `{}` | no |
@@ -351,6 +371,7 @@ services = {
 | Name | Description |
 |------|-------------|
 | <a name="output_listeners_by_service"></a> [listeners\_by\_service](#output\_listeners\_by\_service) | VPC Lattice Listener and Rules. Per Lattice Service, each Listener is composed by the following attributes:<br>- `attributes` = Full output of **aws\_vpclattice\_listener**.<br>- `rules`      = Full output of **aws\_vpclattice\_listener\_rule**. |
+| <a name="output_ram_resource_share"></a> [ram\_resource\_share](#output\_ram\_resource\_share) | AWS Resource Access Manager resource share. Full output of **aws\_ram\_resource\_share**. |
 | <a name="output_service_network"></a> [service\_network](#output\_service\_network) | VPC Lattice resource attributes. Full output of **aws\_vpclattice\_service\_network**. |
 | <a name="output_services"></a> [services](#output\_services) | VPC Lattice Services. The output is composed by the following attributes (per Service created):<br>- `attributes`                  = Full output of **aws\_vpclattice\_service**.<br>- `service_network_association` = Full output of **aws\_vpclattice\_service\_network\_service\_association**. |
 | <a name="output_target_groups"></a> [target\_groups](#output\_target\_groups) | VPC Lattice Target Groups. Full output of **aws\_vpclattice\_target\_group**. |

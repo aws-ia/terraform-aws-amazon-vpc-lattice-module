@@ -1,0 +1,1 @@
+# --- examples/ram_share/outputs.tf ---
