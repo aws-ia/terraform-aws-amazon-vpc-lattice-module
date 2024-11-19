@@ -59,8 +59,8 @@ The attribute `default_action` *- map(any) -* supports the following:
 - `type`          = (string) Default action to apply in the listener. Allowed values are `fixed_response` and `forward`.
 - `status_code`   = (Optional|number) Custom HTTP status codd to return. **To define if the default\_action type is `fixed-response`**.
 - `target_groups` = (Optional|map(string)) Map of target groups to use in the listener's default action. **To define if the default\_action type is `forward`**. The map expects the following:
-  * `target_group_identifier` = (string) Target group identifier. **The key of each target group should map the key you defined in var.target\_groups**.
-  * `weight`                  = (Optional|number) Determines how requests are distributed to the target group. Only required if you specify multiple target groups for a forward action.
+    * `target_group_identifier` = (string) Target group identifier. **The key of each target group should map the key you defined in var.target\_groups**.
+    * `weight`                  = (Optional|number) Determines how requests are distributed to the target group. Only required if you specify multiple target groups for a forward action.
 
 The attribute `rules` (you can define 1 or more) supports the following:
 
@@ -68,19 +68,19 @@ The attribute `rules` (you can define 1 or more) supports the following:
 - `priority` = (number) The priority assigned to the rule. Each rule for a specific listener must have a unique priority. The lower the number the higher the priority.
 - `http_match_method` = (Optional|string) The HTTP method type.
 - `path_match` = (Optional|map(any)) The path match. **This attribute and `header_matches` cannot be set at the same time.**
-  * `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
-  * `exact` = (Optional|string) Specifies an exact type match.
-  * `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
+    * `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
+    * `exact` = (Optional|string) Specifies an exact type match.
+    * `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
 - `headers_match` = (Optional|map(any)) The header matches. Matches incoming requests with rule based on request header value before applying rule action. **This attribute and `path_match` cannot be set at the same time.**
-  * `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
-  * `name` = (Optional|string) The name of the header.
-  * `exact` = (Optional|string) Specifies an exact type match.
-  * `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
+    * `case_sensitive` = (Optional|bool) Indicates whether the match is case sensitive. Defaults to false.
+    * `name` = (Optional|string) The name of the header.
+    * `exact` = (Optional|string) Specifies an exact type match.
+    * `prefix` = (Optional|string) Specifies a prefix type match. Matches the value with the prefix.
 - `action_fixedresponse` = (Optional|map(string)) Describes the rule action that returns a custom HTTP response. **This attribute and `action_forward` cannot be set at the same time.**
-  * `status_code` = (Optional|string) The HTTP response code.
+    * `status_code` = (Optional|string) The HTTP response code.
 - `action_forward` = (Optional|map(string)) The forward action. Traffic that matches the rule is forwarded to the specified target groups. **This attribute and `action_fixedresponse` cannot be set at the same time.**
-  * `target_groups` = (Optional|map(any)) The target groups. You can define more than 1 target group. **The key of each target group should map the key you defined in var.target\_groups**.
-    + `weight` = (Optional|number) With forward actions, you can assign a weight that controls the prioritization and selection of each target group.
+    * `target_groups` = (Optional|map(any)) The target groups. You can define more than 1 target group. **The key of each target group should map the key you defined in var.target\_groups**.
+        + `weight` = (Optional|number) With forward actions, you can assign a weight that controls the prioritization and selection of each target group.
 
 You can share VPC Lattice services using AWS RAM with this module. Check the section [Sharing VPC Lattice resources](#sharing-vpc-lattice-resources) for more information.
 
