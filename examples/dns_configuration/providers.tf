@@ -1,4 +1,4 @@
-# --- examples/vpc_associations/providers.tf ---
+# --- examples/dns_configuration/providers.tf ---
 
 terraform {
   required_version = ">= 1.3.0"

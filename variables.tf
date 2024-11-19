@@ -48,7 +48,7 @@ EOF
   default = {}
 
   validation {
-    error_message = "Invalid key in any of the definitions for var.services. Valid options include: \"identifier\", \"name\", \"auth_type\", \"auth_policy\", \"certificate_arn\", \"custom_domain_name\", \"listeners\"."
+    error_message = "Invalid key in any of the definitions for var.services. Valid options include: \"identifier\", \"name\", \"auth_type\", \"auth_policy\", \"certificate_arn\", \"custom_domain_name\", \"listeners\", and \"hosted_zone_id\"."
     condition = alltrue([
       for service in try(var.services, {}) : length(setsubtract(keys(try(service, {})), [
         "identifier",
@@ -57,7 +57,8 @@ EOF
         "auth_policy",
         "certificate_arn",
         "custom_domain_name",
-        "listeners"
+        "listeners",
+        "hosted_zone_id"
       ])) == 0
     ])
   }
@@ -90,7 +91,7 @@ variable "ram_share" {
   type        = any
   description = <<-EOF
   Configuration of the resources to share using AWS Resource Access Manager (RAM). VPC Lattice service networks and services can be shared using RAM.
-  More information about the format of this variable can be found in the "Usage - AWS RAM share" section of the README.
+  More information about the format of this variable can be found in the "Sharing VPC Lattice resources" section of the README.
 EOF
 
   default = {}
@@ -104,6 +105,23 @@ EOF
       "principals",
       "share_service_network",
       "share_services"
+    ])) == 0
+  }
+}
+
+variable "dns_configuration" {
+  type        = map(string)
+  description = <<-EOF
+  Amazon Route 53 DNS configuration. For VPC Lattice services with custom domain name configured, you can indicate the Hosted Zone ID to create the corresponding Alias record (IPv4 and IPv6) pointing to the VPC Lattice-generated domain name.
+  You can override the Hosted Zone to configure the Alias record by configuring the `hosted_zone_id` attribute under each service definition (`var.services`). 
+  This configuration is only supported if both the VPC Lattice service and the Route 53 Hosted Zone are in the same account. More information about the variable format and multi-Account support can be found in the "Amazon Route 53 DNS configuration" section of the README.
+EOF
+  default     = {}
+
+  validation {
+    error_message = "Invalid key in any of the definitions for var.dns_configuration. Valid options include: \"hosted_zone_id\"."
+    condition = length(setsubtract(keys(var.dns_configuration), [
+      "hosted_zone_id"
     ])) == 0
   }
 }

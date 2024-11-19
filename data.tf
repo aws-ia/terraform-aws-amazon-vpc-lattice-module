@@ -17,6 +17,10 @@ locals {
   # ---------- VPC Lattice Service variables ---------
   # Service Association - if Service Network is created or passed
   create_service_association = local.create_service_network || local.sn_identifier_provided
+  # Checking if a global Private Hosted Zone has been defined
+  global_phz = contains(keys(var.dns_configuration), "hosted_zone_id")
+  # Obtaining a map of VPC Lattice services that require the creation of DNS configuration
+  services_with_dns_config = local.global_phz ? var.services : { for k, v in var.services : k => v if contains(keys(v), "hosted_zone_id") }
 
   # ---------- VPC Lattice Target Groups ----------
   # We create a map of target group IDs

@@ -71,9 +71,40 @@ resource "aws_vpclattice_service_network_service_association" "lattice_service_a
 
 # Data Source: Lattice Service. Used to obtain the information of the Services not created by the module, but its identifier was passed in var.services
 data "aws_vpclattice_service" "lattice_service" {
-  for_each = { for k, v in var.services : k => v if try(v.name, null) == null }
+  for_each = { for k, v in var.services : k => v if contains(keys(v), "identifier") }
 
   service_identifier = each.value.identifier
+}
+
+# ---------- AMAZON ROUTE 53 DNS CONFIGURATION ----------
+# Alias record (IPv4)
+resource "aws_route53_record" "custom_domain_name_a_record" {
+  for_each = local.services_with_dns_config
+
+  zone_id = try(each.value.hosted_zone_id, var.dns_configuration.hosted_zone_id)
+  name    = try(var.services[each.key].custom_domain_name, data.aws_vpclattice_service.lattice_service[each.key].custom_domain_name)
+  type    = "A"
+
+  alias {
+    name                   = try(aws_vpclattice_service.lattice_service[each.key].dns_entry[0].domain_name, data.aws_vpclattice_service.lattice_service[each.key].dns_entry[0].domain_name)
+    zone_id                = try(aws_vpclattice_service.lattice_service[each.key].dns_entry[0].hosted_zone_id, data.aws_vpclattice_service.lattice_service[each.key].dns_entry[0].hosted_zone_id)
+    evaluate_target_health = false
+  }
+}
+
+# Alias record (IPv6)
+resource "aws_route53_record" "custom_domain_name_aaaa_record" {
+  for_each = local.services_with_dns_config
+
+  zone_id = try(each.value.hosted_zone_id, var.dns_configuration.hosted_zone_id)
+  name    = try(var.services[each.key].custom_domain_name, data.aws_vpclattice_service.lattice_service[each.key].custom_domain_name)
+  type    = "AAAA"
+
+  alias {
+    name                   = try(aws_vpclattice_service.lattice_service[each.key].dns_entry[0].domain_name, data.aws_vpclattice_service.lattice_service[each.key].dns_entry[0].domain_name)
+    zone_id                = try(aws_vpclattice_service.lattice_service[each.key].dns_entry[0].hosted_zone_id, data.aws_vpclattice_service.lattice_service[each.key].dns_entry[0].hosted_zone_id)
+    evaluate_target_health = false
+  }
 }
 
 # ---------- VPC LATTICE TARGET GROUPS ----------
