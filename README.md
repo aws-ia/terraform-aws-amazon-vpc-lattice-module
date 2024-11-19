@@ -5,7 +5,7 @@ This module can be used to deploy resources from [Amazon VPC Lattice](https://do
 
 This module handles all the different resources you can use with VPC Lattice: Service Network, Service, Listeners, Listener Rules, Target Groups (and targets), and Associations (Service or VPC). You have the freedom to create the combination of resources you need, so in multi-AWS Account environments you can make use of the module as many times as needed (different providers) to create your application network architecture.
 
-## Table of Contents
+## Table of Contents
 
 1. [VPC Lattice service network](#vpc-lattice-service-network-varservice\_network)
     - [VPC associations](#vpc-associations-varvpc\_associations)
