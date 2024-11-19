@@ -5,23 +5,9 @@ This module can be used to deploy resources from [Amazon VPC Lattice](https://do
 
 This module handles all the different resources you can use with VPC Lattice: Service Network, Service, Listeners, Listener Rules, Target Groups (and targets), and Associations (Service or VPC). You have the freedom to create the combination of resources you need, so in multi-AWS Account environments you can make use of the module as many times as needed (different providers) to create your application network architecture.
 
-## Table of Contents
+## Usage
 
-1. [VPC Lattice service network](#vpc-lattice-service-network-varservice\_network)
-    - [VPC associations](#vpc-associations-varvpc\_associations)
-2. [VPC Lattice service](#vpc-lattice-service-varservices)
-    - [VPC Lattice service associations](#vpc-lattice-service-associations)
-3. [Target groups](#target-groups-vartarget\_groups)
-4. [Sharing VPC Lattice resources](#sharing-vpc-lattice-resources-varram\_share)
-5. [Amazon Route 53 DNS configuration](#amazon-route-53-dns-configuration)
-6. [Requirements](#requirements)
-7. [Providers](#providers)
-8. [Modules](#modules)
-9. [Resources](#resources)
-10. [Inputs](#inputs)
-11. [Outputs](#outputs)
-
-## VPC Lattice service network (var.service\_network)
+### VPC Lattice service network (var.service\_network)
 
 A [VPC Lattice service network](https://docs.aws.amazon.com/vpc-lattice/latest/ug/service-networks.html) is a logical boundary for a collection of services. It is the central place of connectivity where consumers (located in a VPC) and producers (target groups) are connected to allow service consumption. In addition, it provides a central place for access control via [IAM auth policies](https://docs.aws.amazon.com/vpc-lattice/latest/ug/auth-policies.html), and visibility by enabling [logs](https://docs.aws.amazon.com/vpc-lattice/latest/ug/monitoring-access-logs.html).
 
@@ -36,7 +22,7 @@ You can share VPC Lattice service networks using AWS RAM with this module. Check
 
 **Examples** of use can be found in the [/examples/service\_network](./examples/service\_network/) folder.
 
-### VPC associations (var.vpc\_associations)
+#### VPC associations (var.vpc\_associations)
 
 When you associate a VPC with a service network, it enables all the resources within that VPC to be clients and communicate with other services associated to that same service network. You can make use of Security Groups to control the access of the VPC association, allowing some traffic segmentation before the traffic arrives to the Service Network.
 
@@ -45,7 +31,7 @@ You can create more than 1 VPC association with this module, as this variable ex
 - `vpc_id`             = (string) ID of the VPC.
 - `security_group_ids` = (Optional|list(string)) List of Security Group IDs to associate with the VPC association.
 
-## VPC Lattice service (var.services)
+### VPC Lattice service (var.services)
 
 A [VPC Lattice service](https://docs.aws.amazon.com/vpc-lattice/latest/ug/services.html) is an independently deployable unit of software that delivers a specific task or function. It can run on instances, containers, or as serverless functions within an AWS Account or a VPC. A service has a [listener](https://docs.aws.amazon.com/vpc-lattice/latest/ug/listeners.html) that uses **rules** you can configure to help route traffic to your targets.
 
@@ -100,11 +86,11 @@ You can share VPC Lattice services using AWS RAM with this module. Check the sec
 
 **Examples** of use can be found in the [/examples/service](./examples/service/) folder. Note that all the target groups used in the examples will be empty. In the [Target groups](#target-groups-vartarget\_groups) section you will find more information about how to define the different target types.
 
-### VPC Lattice service associations
+#### VPC Lattice service associations
 
 When a VPC Lattice service network is created or referenced using the module, a [VPC Lattice service association](https://docs.aws.amazon.com/vpc-lattice/latest/ug/service-associations.html) is created automatically for each VPC Lattice service created/referenced in the module.
 
-## Target Groups (var.target\_groups)
+### Target Groups (var.target\_groups)
 
 A [Target group](https://docs.aws.amazon.com/vpc-lattice/latest/ug/target-groups.html) is a collection of targets, or compute resources that run your application or service. Targets in VPC Lattice can be Amazon EC2 instances, IP addresses, AWS Lambda functions, Application Load Balancers, Amazon ECS tasks or Kubernetes Pods.
 
@@ -147,7 +133,7 @@ The `targets` attribute *- map(any) -* supports the following:
 
 **Examples** of use can be found in the [/examples/target\_groups](./examples/target\_groups/) folder. You will find an example for each target supported in this module.
 
-## Sharing VPC Lattice resources (var.ram\_share)
+### Sharing VPC Lattice resources (var.ram\_share)
 
 With [AWS Resource Access Manager](https://aws.amazon.com/ram/) (RAM), you can share VPC Lattice service networks and services. With this module, you can use the variable `var.ram_share` to share VPC Lattice resources. The variable supports the following attributes:
 
@@ -160,7 +146,7 @@ With [AWS Resource Access Manager](https://aws.amazon.com/ram/) (RAM), you can s
 
 **Examples** of use can be found in the [/examples/ram\_share](./examples/ram\_share/) folder.
 
-## Amazon Route 53 DNS configuration
+### Amazon Route 53 DNS configuration
 
 VPC Lattice leverages [Domain Name System (DNS)](https://aws.amazon.com/route53/what-is-dns/) for service discovery, so each VPC Lattice service is easily identifiable through its service-managed or custom domain names. When a new Amazon VPC Lattice service is created, a service-managed domain name is generated. This domain name is publicly resolvable and resolves either to an IPv4 link-local address or an IPv6 unique-local address. So, a consumer application using this service-managed domain name does not require any extra DNS configuration for the service-to-service communication (provided the VPC Lattice configuration allows connectivity). However, it’s more likely that you will use your own custom domain names.
 
