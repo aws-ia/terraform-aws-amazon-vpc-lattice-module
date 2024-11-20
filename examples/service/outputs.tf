@@ -22,3 +22,8 @@ output "service_listener_rules" {
   description = "VPC Lattice listener rules."
   value       = module.service_httplistener.listeners_by_service.myservice.http_listener.rules
 }
+
+output "service_log_subscriptions" {
+  description = "VPC Lattice service log subscriptions."
+  value       = { for k, v in module.service_customdomainname_noauth.services.service1.log_subscriptions : k => v.arn }
+}

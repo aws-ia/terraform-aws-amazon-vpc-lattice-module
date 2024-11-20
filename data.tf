@@ -12,7 +12,10 @@ locals {
   sn_identifier_provided = contains(keys(var.service_network), "identifier")
   # Checking if Service Network auth policy should be created
   sn_auth_policy = (try(var.service_network.auth_type, "NONE") == "AWS_IAM") && (contains(keys(var.service_network), "auth_policy"))
-
+  # Checking the access log destinations for the service network
+  sn_access_log_cloudwatch = contains(keys(var.service_network), "access_log_cloudwatch")
+  sn_access_log_s3         = contains(keys(var.service_network), "access_log_s3")
+  sn_access_log_firehose   = contains(keys(var.service_network), "access_log_firehose")
 
   # ---------- VPC Lattice Service variables ---------
   # Service Association - if Service Network is created or passed

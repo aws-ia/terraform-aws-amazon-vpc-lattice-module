@@ -18,6 +18,28 @@ resource "aws_vpclattice_auth_policy" "service_network_auth_policy" {
   policy              = var.service_network.auth_policy
 }
 
+# Access log subscription
+resource "aws_vpclattice_access_log_subscription" "service_network_cloudwatch_access_log" {
+  count = local.create_service_network && local.sn_access_log_cloudwatch ? 1 : 0
+
+  resource_identifier = local.service_network_arn
+  destination_arn     = try(var.service_network.access_log_cloudwatch, null)
+}
+
+resource "aws_vpclattice_access_log_subscription" "service_network_s3_access_log" {
+  count = local.create_service_network && local.sn_access_log_s3 ? 1 : 0
+
+  resource_identifier = local.service_network_arn
+  destination_arn     = try(var.service_network.access_log_s3, null)
+}
+
+resource "aws_vpclattice_access_log_subscription" "service_network_firehose_access_log" {
+  count = local.create_service_network && local.sn_access_log_firehose ? 1 : 0
+
+  resource_identifier = local.service_network_arn
+  destination_arn     = try(var.service_network.access_log_firehose, null)
+}
+
 # ---------- VPC LATTICE VPC ASSOCIATIONS ----------
 resource "aws_vpclattice_service_network_vpc_association" "lattice_vpc_association" {
   for_each = var.vpc_associations
@@ -56,7 +78,7 @@ resource "aws_vpclattice_auth_policy" "service_auth_policy" {
   policy              = each.value.auth_policy
 }
 
-# VPC Lattice Service Association (only if Service Network is created or provided)
+# VPC Lattice Service Association (only if service network is created or provided)
 resource "aws_vpclattice_service_network_service_association" "lattice_service_association" {
   for_each = {
     for k, v in var.services : k => v
@@ -74,6 +96,37 @@ data "aws_vpclattice_service" "lattice_service" {
   for_each = { for k, v in var.services : k => v if contains(keys(v), "identifier") }
 
   service_identifier = each.value.identifier
+}
+
+# Access log subscription (only if VPC Lattice service is created - not referenced)
+resource "aws_vpclattice_access_log_subscription" "service_cloudwatch_access_log" {
+  for_each = {
+    for k, v in var.services : k => v
+    if contains(keys(v), "access_log_cloudwatch") && try(v.name, null) != null
+  }
+
+  resource_identifier = try(aws_vpclattice_service.lattice_service[each.key].arn, null)
+  destination_arn     = try(each.value.access_log_cloudwatch, null)
+}
+
+resource "aws_vpclattice_access_log_subscription" "service_s3_access_log" {
+  for_each = {
+    for k, v in var.services : k => v
+    if contains(keys(v), "access_log_s3") && try(v.name, null) != null
+  }
+
+  resource_identifier = try(aws_vpclattice_service.lattice_service[each.key].arn, null)
+  destination_arn     = try(each.value.access_log_s3, null)
+}
+
+resource "aws_vpclattice_access_log_subscription" "service_firehose_access_log" {
+  for_each = {
+    for k, v in var.services : k => v
+    if contains(keys(v), "access_log_firehose") && try(v.name, null) != null
+  }
+
+  resource_identifier = try(aws_vpclattice_service.lattice_service[each.key].arn, null)
+  destination_arn     = try(each.value.access_log_firehose, null)
 }
 
 # ---------- AMAZON ROUTE 53 DNS CONFIGURATION ----------

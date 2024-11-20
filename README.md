@@ -13,10 +13,13 @@ A [VPC Lattice service network](https://docs.aws.amazon.com/vpc-lattice/latest/u
 
 When creating a service network in the module, the following attributes are expected:
 
-- `name`        = (Optional|string) VPC Lattice service network name. This attribute creates a **new** service network using the specified name. **This attribute and `identifier` cannot be set at the same time.**
-- `auth_type`   = (Optional|string) Type of IAM policy to apply in the service network. Allowed values are `NONE` (default) and `AWS_IAM`.
-- `auth_policy` = (Optional|any) Auth policy. The policy string in JSON must not contain newlines or blank lines. The auth policy resource will be created only if `auth_type` is set to `AWS_IAM`.
-- `identifier`  = (Optional|string) The ID or ARN of an **existing** service network. If you are working in multi-AWS account environments, ARN is compulsory. **This attribute and `name` cannot be set at the same time.**
+- `name`                  = (Optional|string) VPC Lattice service network name. This attribute creates a **new** service network using the specified name. **This attribute and `identifier` cannot be set at the same time.**
+- `auth_type`             = (Optional|string) Type of IAM policy to apply in the service network. Allowed values are `NONE` (default) and `AWS_IAM`.
+- `auth_policy`           = (Optional|any) Auth policy. The policy string in JSON must not contain newlines or blank lines. The auth policy resource will be created only if `auth_type` is set to `AWS_IAM`.
+- `identifier`            = (Optional|string) The ID or ARN of an **existing** service network. If you are working in multi-AWS account environments, ARN is compulsory. **This attribute and `name` cannot be set at the same time.**
+- `access_log_cloudwatch` = (Optional|string) Amazon CloudWatch log group ARN to configure as service network's access log destination.
+- `access_log_s3`         = (Optional|string) Amazon S3 bucket ARN to configure as service network's access log destination.
+- `access_log_firehose`   = (Optional|string) Data Firehose delivery stream ARN to configure as service network's access log destination.
 
 You can share VPC Lattice service networks using AWS RAM with this module. Check the section [Sharing VPC Lattice resources](#sharing-vpc-lattice-resources) for more information.
 
@@ -31,20 +34,27 @@ You can create more than 1 VPC association with this module, as this variable ex
 - `vpc_id`             = (string) ID of the VPC.
 - `security_group_ids` = (Optional|list(string)) List of Security Group IDs to associate with the VPC association.
 
+#### Access Logs for VPC Lattice service networks
+
+You can enable [access logs](https://docs.aws.amazon.com/vpc-lattice/latest/ug/service-network-monitoring.html) for VPC Lattice service networks and specify the destination resource for your logs. VPC Lattice can send logs to the following resources: **CloudWatch Log groups**, **Firehose delivery streams**, and **S3 buckets**. You can configure the three destinations at the same time (`access_log_cloudwatch`, `access_log_s3`, `access_log_firehose`), but you cannot configure the same destination type twice.
+
 ### VPC Lattice service (var.services)
 
 A [VPC Lattice service](https://docs.aws.amazon.com/vpc-lattice/latest/ug/services.html) is an independently deployable unit of software that delivers a specific task or function. It can run on instances, containers, or as serverless functions within an AWS Account or a VPC. A service has a [listener](https://docs.aws.amazon.com/vpc-lattice/latest/ug/listeners.html) that uses **rules** you can configure to help route traffic to your targets.
 
 You can create 1 or more VPC Lattice services using the module, as this variable expects a **map of objects** with the following attributes:
 
-- `identifier`         = (Optional|string) ID or ARN of the VPC Lattice service (if it was created outside this module). **This attribute and `name` cannot be set at the same time.**
-- `name`               = (Optional|string) VPC Lattice service's name - to create a new resource. **This attribute and `identifier` cannot be set at the same time.**
-- `auth_type`          = (Optional|string) Type of IAM policy. Either `NONE` (default) or `AWS_IAM`.
-- `auth_policy`        = (Optional|any) Auth policy. The policy string in JSON must not contain newlines or blank lines. The auth policy resource will be created only if `auth_type` is set to `AWS_IAM`.
-- `certificate_arn`    = (Optional|string) **When configuring a HTTPS listener** AWS Certificate Manager certificate's ARN.
-- `custom_domain_name` = (Optional|string) Custom domain name for the service.
-- `listeners`          = (Optional|map(string)) VPC Lattice listeners (and rules) to configure in the service - more information about its definition below.
-- `hosted_zone_id`     = (Optional|string) Amazon Route 53 hosted zone ID to configure Alias records when configuring custom domain names. Check the section [Amazon Route 53 DNS configuration](#amazon-route-53-dns-configuration) for more information.
+- `identifier`            = (Optional|string) ID or ARN of the VPC Lattice service (if it was created outside this module). **This attribute and `name` cannot be set at the same time.**
+- `name`                  = (Optional|string) VPC Lattice service's name - to create a new resource. **This attribute and `identifier` cannot be set at the same time.**
+- `auth_type`             = (Optional|string) Type of IAM policy. Either `NONE` (default) or `AWS_IAM`.
+- `auth_policy`           = (Optional|any) Auth policy. The policy string in JSON must not contain newlines or blank lines. The auth policy resource will be created only if `auth_type` is set to `AWS_IAM`.
+- `certificate_arn`       = (Optional|string) **When configuring a HTTPS listener** AWS Certificate Manager certificate's ARN.
+- `custom_domain_name`    = (Optional|string) Custom domain name for the service.
+- `listeners`             = (Optional|map(string)) VPC Lattice listeners (and rules) to configure in the service - more information about its definition below.
+- `hosted_zone_id`        = (Optional|string) Amazon Route 53 hosted zone ID to configure Alias records when configuring custom domain names. Check the section [Amazon Route 53 DNS configuration](#amazon-route-53-dns-configuration) for more information.
+- `access_log_cloudwatch` = (Optional|string) Amazon CloudWatch log group ARN to configure as service network's access log destination.
+- `access_log_s3`         = (Optional|string) Amazon S3 bucket ARN to configure as service network's access log destination.
+- `access_log_firehose`   = (Optional|string) Data Firehose delivery stream ARN to configure as service network's access log destination.
 
 The attribute `listeners` (you can define 1 or more) supports the following:
 
@@ -89,6 +99,10 @@ You can share VPC Lattice services using AWS RAM with this module. Check the sec
 #### VPC Lattice service associations
 
 When a VPC Lattice service network is created or referenced using the module, a [VPC Lattice service association](https://docs.aws.amazon.com/vpc-lattice/latest/ug/service-associations.html) is created automatically for each VPC Lattice service created/referenced in the module.
+
+#### Access Logs for VPC Lattice services
+
+You can enable [access logs](https://docs.aws.amazon.com/vpc-lattice/latest/ug/service-monitoring.html) for VPC Lattice services and specify the destination resource for your logs. VPC Lattice can send logs to the following resources: **CloudWatch Log groups**, **Firehose delivery streams**, and **S3 buckets**. You can configure the three destinations at the same time (`access_log_cloudwatch`, `access_log_s3`, `access_log_firehose`) for each VPC Lattice service configured under `var.services`, but you cannot configure the same destination type twice.
 
 ### Target Groups (var.target\_groups)
 
@@ -193,6 +207,12 @@ This module supports the creation of alias records (both A and AAAA) in Route 53
 | [aws_ram_resource_share.ram_resource_share](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ram_resource_share) | resource |
 | [aws_route53_record.custom_domain_name_a_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_route53_record.custom_domain_name_aaaa_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [aws_vpclattice_access_log_subscription.service_cloudwatch_access_log](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_access_log_subscription) | resource |
+| [aws_vpclattice_access_log_subscription.service_firehose_access_log](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_access_log_subscription) | resource |
+| [aws_vpclattice_access_log_subscription.service_network_cloudwatch_access_log](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_access_log_subscription) | resource |
+| [aws_vpclattice_access_log_subscription.service_network_firehose_access_log](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_access_log_subscription) | resource |
+| [aws_vpclattice_access_log_subscription.service_network_s3_access_log](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_access_log_subscription) | resource |
+| [aws_vpclattice_access_log_subscription.service_s3_access_log](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_access_log_subscription) | resource |
 | [aws_vpclattice_auth_policy.service_auth_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_auth_policy) | resource |
 | [aws_vpclattice_auth_policy.service_network_auth_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_auth_policy) | resource |
 | [aws_vpclattice_service.lattice_service](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpclattice_service) | resource |
@@ -209,8 +229,8 @@ This module supports the creation of alias records (both A and AAAA) in Route 53
 |------|-------------|------|---------|:--------:|
 | <a name="input_dns_configuration"></a> [dns\_configuration](#input\_dns\_configuration) | Amazon Route 53 DNS configuration. For VPC Lattice services with custom domain name configured, you can indicate the Hosted Zone ID to create the corresponding Alias record (IPv4 and IPv6) pointing to the VPC Lattice-generated domain name.<br>You can override the Hosted Zone to configure the Alias record by configuring the `hosted_zone_id` attribute under each service definition (`var.services`). <br>This configuration is only supported if both the VPC Lattice service and the Route 53 Hosted Zone are in the same account. More information about the variable format and multi-Account support can be found in the "Amazon Route 53 DNS configuration" section of the README. | `map(string)` | `{}` | no |
 | <a name="input_ram_share"></a> [ram\_share](#input\_ram\_share) | Configuration of the resources to share using AWS Resource Access Manager (RAM). VPC Lattice service networks and services can be shared using RAM.<br>More information about the format of this variable can be found in the "Sharing VPC Lattice resources" section of the README. | `any` | `{}` | no |
-| <a name="input_service_network"></a> [service\_network](#input\_service\_network) | Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). Setting the `name` attribute will create a **new** service network, while using the attribute `identifier` will reference an **existing** service network.<br>More information about the format of this variable can be found in the "Usage - Service Network" section of the README. | `any` | `{}` | no |
-| <a name="input_services"></a> [services](#input\_services) | Definition of the VPC Lattice Services to create. You can use this module to either create only Lattice services (not associated with any service network), or associated with a service network (if you create one or provide an identifier). You can define 1 or more Service using this module.<br>More information about the format of this variable can be found in the "Usage - Services" section of the README. | `any` | `{}` | no |
+| <a name="input_service_network"></a> [service\_network](#input\_service\_network) | Amazon VPC Lattice service network information. You can either create a new service network or reference a current one (to associate VPC Lattice services or VPCs). Setting the `name` attribute will create a **new** service network, while using the attribute `identifier` will reference an **existing** service network.<br>More information about the format of this variable can be found in the "Usage - VPC Lattice service network" section of the README. | `any` | `{}` | no |
+| <a name="input_services"></a> [services](#input\_services) | Definition of the VPC Lattice Services to create. You can use this module to either create only Lattice services (not associated with any service network), or associated with a service network (if you create one or provide an identifier). You can define 1 or more Service using this module.<br>More information about the format of this variable can be found in the "Usage - VPC Lattice service" section of the README. | `any` | `{}` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to all the resources created in this module. | `map(string)` | `{}` | no |
 | <a name="input_target_groups"></a> [target\_groups](#input\_target\_groups) | Definitions of the Target Groups to create. You can define 1 or more Target Groups using this module.<br>More information about the format of this variable can be found in the "Usage - Target Groups" section of the README. | `any` | `{}` | no |
 | <a name="input_vpc_associations"></a> [vpc\_associations](#input\_vpc\_associations) | VPC Lattice VPC associations. You can define 1 or more VPC associations using this module.<br>More information about the format of this variable can be found in the "Usage - VPC association" section of the README. | <pre>map(object({<br>    vpc_id             = optional(string)<br>    security_group_ids = optional(list(string))<br>  }))</pre> | `{}` | no |
@@ -222,7 +242,8 @@ This module supports the creation of alias records (both A and AAAA) in Route 53
 | <a name="output_listeners_by_service"></a> [listeners\_by\_service](#output\_listeners\_by\_service) | VPC Lattice Listener and Rules. Per Lattice Service, each Listener is composed by the following attributes:<br>- `attributes` = Full output of **aws\_vpclattice\_listener**.<br>- `rules`      = Full output of **aws\_vpclattice\_listener\_rule**. |
 | <a name="output_ram_resource_share"></a> [ram\_resource\_share](#output\_ram\_resource\_share) | AWS Resource Access Manager resource share. Full output of **aws\_ram\_resource\_share**. |
 | <a name="output_service_network"></a> [service\_network](#output\_service\_network) | VPC Lattice resource attributes. Full output of **aws\_vpclattice\_service\_network**. |
-| <a name="output_services"></a> [services](#output\_services) | VPC Lattice Services. The output is composed by the following attributes (per Service created):<br>- `attributes`                  = Full output of **aws\_vpclattice\_service**.<br>- `service_network_association` = Full output of **aws\_vpclattice\_service\_network\_service\_association**. |
+| <a name="output_service_network_log_subscriptions"></a> [service\_network\_log\_subscriptions](#output\_service\_network\_log\_subscriptions) | VPC Lattice service network access log subscriptions. The output is composed by the following attributes:<br>- `cloudwatch` = Full output of **aws\_vpclattice\_access\_log\_subscription**.<br>- `s3`         = Full output of **aws\_vpclattice\_access\_log\_subscription**.<br>- `firehose`   = Full output of **aws\_vpclattice\_access\_log\_subscription**. |
+| <a name="output_services"></a> [services](#output\_services) | VPC Lattice Services. The output is composed by the following attributes (per Service created):<br>- `attributes`                  = Full output of **aws\_vpclattice\_service**.<br>- `service_network_association` = Full output of **aws\_vpclattice\_service\_network\_service\_association**.<br>- `log_subscriptions`           = *The output is composed by the following attributes:*<br>  - `cloudwatch` = Full output of **aws\_vpclattice\_access\_log\_subscription**.<br>  - `s3`         = Full output of **aws\_vpclattice\_access\_log\_subscription**.<br>  - `firehose`   = Full output of **aws\_vpclattice\_access\_log\_subscription**. |
 | <a name="output_target_groups"></a> [target\_groups](#output\_target\_groups) | VPC Lattice Target Groups. Full output of **aws\_vpclattice\_target\_group**. |
 | <a name="output_vpc_associations"></a> [vpc\_associations](#output\_vpc\_associations) | VPC Lattice VPC associations. Full output of **aws\_vpclattice\_service\_network\_vpc\_association**. |
 <!-- END_TF_DOCS -->

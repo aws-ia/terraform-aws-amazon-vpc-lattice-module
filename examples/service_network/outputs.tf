@@ -10,6 +10,11 @@ output "service_network_arn" {
   value       = module.vpclattice_service_network_without_policy.service_network.arn
 }
 
+output "service_network_log_subscriptions" {
+  description = "VPC Lattice service network log subscriptions."
+  value       = module.vpclattice_service_network_without_policy.service_network_log_subscriptions
+}
+
 output "service_network" {
   description = "VPC Lattice service network (full output)."
   value       = module.vpclattice_service_network_with_policy.service_network

@@ -5,8 +5,11 @@ module "vpclattice_service_network_without_policy" {
   source = "../.."
 
   service_network = {
-    name      = "service-network-without-policy"
-    auth_type = "NONE"
+    name                  = "service-network-without-policy"
+    auth_type             = "NONE"
+    access_log_cloudwatch = aws_cloudwatch_log_group.service_network_loggroup.arn
+    access_log_s3         = aws_s3_bucket.service_network_logbucket.arn
+    access_log_firehose   = aws_kinesis_firehose_delivery_stream.service_network_deliverystream.arn
   }
 }
 
@@ -63,6 +66,57 @@ module "vpclattice_vpc_associations" {
   } }
 }
 
+# ---------- SUPPORT RESOURCES ----------
+# Generate random string (for resources' names)
+resource "random_string" "random" {
+  length  = 8
+  special = false
+  upper   = false
+}
+
+# S3 Bucket
+resource "aws_s3_bucket" "service_network_logbucket" {
+  bucket        = "sn-logbucket-${random_string.random.result}"
+  force_destroy = true
+}
+
+# CloudWatch Log Group
+resource "aws_cloudwatch_log_group" "service_network_loggroup" {
+  name              = "sn_loggroup-${random_string.random.result}"
+  retention_in_days = 0
+}
+
+# Firehose Delivery Stream
+resource "aws_kinesis_firehose_delivery_stream" "service_network_deliverystream" {
+  name        = "sn-loggroup-firehose-${random_string.random.result}"
+  destination = "extended_s3"
+
+  extended_s3_configuration {
+    role_arn   = aws_iam_role.firehose_role.arn
+    bucket_arn = aws_s3_bucket.service_network_logbucket.arn
+  }
+}
+
+# IAM Role (for Firehose Delivery Stream)
+data "aws_iam_policy_document" "firehose_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["firehose.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "firehose_role" {
+  name               = "firehose_test_role"
+  assume_role_policy = data.aws_iam_policy_document.firehose_assume_role.json
+}
+
+# VPCs
 module "vpcs" {
   for_each = var.vpcs
   source   = "aws-ia/vpc/aws"

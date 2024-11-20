@@ -3,24 +3,27 @@
 variable "service_network" {
   type        = any
   description = <<-EOF
-    Amazon VPC Lattice Service Network information. You can either create a new Service Network or reference a current one (to associate Services or VPCs). Setting the `name` attribute will create a **new** service network, while using the attribute `identifier` will reference an **existing** service network.
-    More information about the format of this variable can be found in the "Usage - Service Network" section of the README.
+    Amazon VPC Lattice service network information. You can either create a new service network or reference a current one (to associate VPC Lattice services or VPCs). Setting the `name` attribute will create a **new** service network, while using the attribute `identifier` will reference an **existing** service network.
+    More information about the format of this variable can be found in the "Usage - VPC Lattice service network" section of the README.
 EOF
 
   default = {}
 
   validation {
-    error_message = "Invalid key in any of the definitions for var.service_network. Valid options include: \"name\", \"auth_type\", \"auth_policy\", \"identifier\", \"identifier\"."
+    error_message = "Invalid key in any of the definitions for var.service_network. Valid options include: \"name\", \"auth_type\", \"auth_policy\", \"identifier\", \"access_log_cloudwatch\", \"access_log_s3\", \"access_log_firehose\"."
     condition = length(setsubtract(keys(try(var.service_network, {})), [
       "name",
       "auth_type",
       "auth_policy",
-      "identifier"
+      "identifier",
+      "access_log_cloudwatch",
+      "access_log_s3",
+      "access_log_firehose"
     ])) == 0
   }
 
   validation {
-    error_message = "You should define either the `name` of a new Service Network or its `identifier`, not both attributes."
+    error_message = "You should define either the `name` of a new VPC Lattice service network or its `identifier`, not both attributes."
     condition     = length(setintersection(keys(try(var.service_network, {})), ["name", "identifier"])) != 2
   }
 }
@@ -42,13 +45,13 @@ variable "services" {
   type        = any
   description = <<-EOF
   Definition of the VPC Lattice Services to create. You can use this module to either create only Lattice services (not associated with any service network), or associated with a service network (if you create one or provide an identifier). You can define 1 or more Service using this module.
-  More information about the format of this variable can be found in the "Usage - Services" section of the README.
+  More information about the format of this variable can be found in the "Usage - VPC Lattice service" section of the README.
 EOF
 
   default = {}
 
   validation {
-    error_message = "Invalid key in any of the definitions for var.services. Valid options include: \"identifier\", \"name\", \"auth_type\", \"auth_policy\", \"certificate_arn\", \"custom_domain_name\", \"listeners\", and \"hosted_zone_id\"."
+    error_message = "Invalid key in any of the definitions for var.services. Valid options include: \"identifier\", \"name\", \"auth_type\", \"auth_policy\", \"certificate_arn\", \"custom_domain_name\", \"listeners\", \"hosted_zone_id\", \"access_log_cloudwatch\", \"access_log_s3\", and \"access_log_firehose\"."
     condition = alltrue([
       for service in try(var.services, {}) : length(setsubtract(keys(try(service, {})), [
         "identifier",
@@ -58,7 +61,10 @@ EOF
         "certificate_arn",
         "custom_domain_name",
         "listeners",
-        "hosted_zone_id"
+        "hosted_zone_id",
+        "access_log_cloudwatch",
+        "access_log_s3",
+        "access_log_firehose"
       ])) == 0
     ])
   }
