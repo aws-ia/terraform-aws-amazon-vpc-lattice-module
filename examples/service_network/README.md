@@ -32,7 +32,7 @@ In the `outputs.tf` file, you can see an example on how to obtain the VPC Lattic
 | <a name="module_vpclattice_service_network_with_policy"></a> [vpclattice\_service\_network\_with\_policy](#module\_vpclattice\_service\_network\_with\_policy) | ../.. | n/a |
 | <a name="module_vpclattice_service_network_without_policy"></a> [vpclattice\_service\_network\_without\_policy](#module\_vpclattice\_service\_network\_without\_policy) | ../.. | n/a |
 | <a name="module_vpclattice_vpc_associations"></a> [vpclattice\_vpc\_associations](#module\_vpclattice\_vpc\_associations) | ../.. | n/a |
-| <a name="module_vpcs"></a> [vpcs](#module\_vpcs) | aws-ia/vpc/aws | 4.4.1 |
+| <a name="module_vpcs"></a> [vpcs](#module\_vpcs) | aws-ia/vpc/aws | 4.4.4 |
 
 ## Resources
 
