@@ -194,7 +194,7 @@ This module supports the creation of alias records (both A and AAAA) in Route 53
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_listeners"></a> [listeners](#module\_listeners) | ./modules/listeners | n/a |
-| <a name="module_tags"></a> [tags](#module\_tags) | aws-ia/label/aws | 0.0.5 |
+| <a name="module_tags"></a> [tags](#module\_tags) | aws-ia/label/aws | 0.0.6 |
 | <a name="module_targets"></a> [targets](#module\_targets) | ./modules/targets | n/a |
 
 ## Resources
