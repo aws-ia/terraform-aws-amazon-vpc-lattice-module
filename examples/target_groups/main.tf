@@ -54,7 +54,7 @@ module "vpclattice_target_groups" {
 # VPC - to create IP targets
 module "vpc" {
   source  = "aws-ia/vpc/aws"
-  version = "4.4.1"
+  version = "4.4.4"
 
   name       = "vpc"
   cidr_block = "10.0.0.0/24"

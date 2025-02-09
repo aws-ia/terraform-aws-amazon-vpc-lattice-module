@@ -120,7 +120,7 @@ resource "aws_iam_role" "firehose_role" {
 module "vpcs" {
   for_each = var.vpcs
   source   = "aws-ia/vpc/aws"
-  version  = "4.4.1"
+  version  = "4.4.4"
 
   name       = each.key
   cidr_block = each.value.cidr_block
