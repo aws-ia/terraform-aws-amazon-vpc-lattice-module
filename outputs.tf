@@ -7,6 +7,20 @@ output "service_network" {
 EOF
 }
 
+output "service_network_log_subscriptions" {
+  value = {
+    cloudwatch = try(aws_vpclattice_access_log_subscription.service_network_cloudwatch_access_log[0], null)
+    s3         = try(aws_vpclattice_access_log_subscription.service_network_s3_access_log[0], null)
+    firehose   = try(aws_vpclattice_access_log_subscription.service_network_firehose_access_log[0], null)
+  }
+  description = <<-EOF
+  VPC Lattice service network access log subscriptions. The output is composed by the following attributes:
+  - `cloudwatch` = Full output of **aws_vpclattice_access_log_subscription**.
+  - `s3`         = Full output of **aws_vpclattice_access_log_subscription**.
+  - `firehose`   = Full output of **aws_vpclattice_access_log_subscription**.
+EOF
+}
+
 output "vpc_associations" {
   value       = try(aws_vpclattice_service_network_vpc_association.lattice_vpc_association, null)
   description = <<-EOF
@@ -18,11 +32,20 @@ output "services" {
   value = { for k, v in var.services : k => {
     attributes                  = try(aws_vpclattice_service.lattice_service[k], data.aws_vpclattice_service.lattice_service[k])
     service_network_association = try(aws_vpclattice_service_network_service_association.lattice_service_association[k], null)
+    log_subscriptions = {
+      cloudwatch = try(aws_vpclattice_access_log_subscription.service_cloudwatch_access_log[k], null)
+      s3         = try(aws_vpclattice_access_log_subscription.service_s3_access_log[k], null)
+      firehose   = try(aws_vpclattice_access_log_subscription.service_firehose_access_log[k], null)
+    }
   } }
   description = <<-EOF
   VPC Lattice Services. The output is composed by the following attributes (per Service created):
   - `attributes`                  = Full output of **aws_vpclattice_service**.
   - `service_network_association` = Full output of **aws_vpclattice_service_network_service_association**.
+  - `log_subscriptions`           = *The output is composed by the following attributes:*
+    - `cloudwatch` = Full output of **aws_vpclattice_access_log_subscription**.
+    - `s3`         = Full output of **aws_vpclattice_access_log_subscription**.
+    - `firehose`   = Full output of **aws_vpclattice_access_log_subscription**.
 EOF
 }
 

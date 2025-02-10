@@ -12,11 +12,18 @@ locals {
   sn_identifier_provided = contains(keys(var.service_network), "identifier")
   # Checking if Service Network auth policy should be created
   sn_auth_policy = (try(var.service_network.auth_type, "NONE") == "AWS_IAM") && (contains(keys(var.service_network), "auth_policy"))
-
+  # Checking the access log destinations for the service network
+  sn_access_log_cloudwatch = contains(keys(var.service_network), "access_log_cloudwatch")
+  sn_access_log_s3         = contains(keys(var.service_network), "access_log_s3")
+  sn_access_log_firehose   = contains(keys(var.service_network), "access_log_firehose")
 
   # ---------- VPC Lattice Service variables ---------
   # Service Association - if Service Network is created or passed
   create_service_association = local.create_service_network || local.sn_identifier_provided
+  # Checking if a global Private Hosted Zone has been defined
+  global_phz = contains(keys(var.dns_configuration), "hosted_zone_id")
+  # Obtaining a map of VPC Lattice services that require the creation of DNS configuration
+  services_with_dns_config = local.global_phz ? var.services : { for k, v in var.services : k => v if contains(keys(v), "hosted_zone_id") }
 
   # ---------- VPC Lattice Target Groups ----------
   # We create a map of target group IDs
@@ -43,7 +50,7 @@ locals {
 # Sanitizes tags for aws provider
 module "tags" {
   source  = "aws-ia/label/aws"
-  version = "0.0.5"
+  version = "0.0.6"
 
   tags = var.tags
 }
