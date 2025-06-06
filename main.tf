@@ -274,10 +274,25 @@ resource "aws_ram_resource_association" "ram_service_network_association" {
   resource_share_arn = local.resource_share_arn
 }
 
+locals {
+  ram_services_association_resources = {
+    for svc in local.share_services :
+      svc => lookup(
+        aws_vpclattice_service.lattice_service,
+        svc,
+        lookup(
+          data.aws_vpclattice_service.lattice_service,
+          svc,
+          null
+        )
+      )
+  }
+}
+
 # AWS RAM resource association - VPC Lattice services
 resource "aws_ram_resource_association" "ram_services_association" {
   count = local.config_ram_share ? length(local.share_services) : 0
 
-  resource_arn       = aws_vpclattice_service.lattice_service[local.share_services[count.index]].arn
+  resource_arn       = local.ram_services_association_resources[local.share_services[count.index]].arn
   resource_share_arn = local.resource_share_arn
 }
