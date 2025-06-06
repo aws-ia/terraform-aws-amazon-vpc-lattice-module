@@ -43,6 +43,19 @@ locals {
   share_service_network = local.config_ram_share ? local.create_service_network && try(var.ram_share.share_service_network, true) : false
   # Default of var.ram_share.share_services - if not defined, all the created services will be included
   share_services = try(var.ram_share.share_services, keys(var.services))
+  # Support RAM share of services managed by the module as well as external ones
+  ram_services_association_resources = {
+    for svc in local.share_services :
+    svc => lookup(
+      aws_vpclattice_service.lattice_service,
+      svc,
+      lookup(
+        data.aws_vpclattice_service.lattice_service,
+        svc,
+        null
+      )
+    )
+  }
   # Move var.ram_share.principals from list(string) to map(string)
   principals_map = { for index, principal in try(var.ram_share.principals, []) : index => principal }
 }
