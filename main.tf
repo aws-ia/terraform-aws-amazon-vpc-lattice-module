@@ -277,15 +277,15 @@ resource "aws_ram_resource_association" "ram_service_network_association" {
 locals {
   ram_services_association_resources = {
     for svc in local.share_services :
-      svc => lookup(
-        aws_vpclattice_service.lattice_service,
+    svc => lookup(
+      aws_vpclattice_service.lattice_service,
+      svc,
+      lookup(
+        data.aws_vpclattice_service.lattice_service,
         svc,
-        lookup(
-          data.aws_vpclattice_service.lattice_service,
-          svc,
-          null
-        )
+        null
       )
+    )
   }
 }
 
