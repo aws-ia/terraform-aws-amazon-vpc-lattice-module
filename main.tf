@@ -278,6 +278,6 @@ resource "aws_ram_resource_association" "ram_service_network_association" {
 resource "aws_ram_resource_association" "ram_services_association" {
   count = local.config_ram_share ? length(local.share_services) : 0
 
-  resource_arn       = aws_vpclattice_service.lattice_service[local.share_services[count.index]].arn
+  resource_arn       = local.ram_services_association_resources[local.share_services[count.index]].arn
   resource_share_arn = local.resource_share_arn
 }
